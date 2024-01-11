@@ -11,8 +11,9 @@ const helpers = require('./utils/helpers');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+//do I need to change any of this???
 const sess = {
-    secret: 'Super secret secret', //replace -------------------
+    secret: "WdcumAKZfloCP0u7Wgm%diFO7MWc3jGmW7VYHY3lp20r4bPiNImNmQbde%!9Ypb%4P7UCGXzIcLvNYDrR6oRR&L*&DqiblyDm$%3!FkVJ!u3y^%Iapx6chL(6&XQktqb", 
     cookie: {},
     resave: false,
     saveUninitialized: true,
