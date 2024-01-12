@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 
     res.render('homepage', {
         blogs,
-        loggedIn: req.session.loggedIn
+        logged_in: req.session.logged_in
     });
     } catch (err) {
         console.error(err);
@@ -42,7 +42,7 @@ router.get('/blog/:id', async (req, res) => {
 
     res.render('blog', {
         ...blog,
-        loggedIn: req.session.loggedIn
+        logged_in: req.session.logged_in
     });
     } catch (err) {
         console.error(err);
@@ -62,7 +62,7 @@ router.get('/dashboard', withAuth, async (req, res) => {
 
         res.render('dashboard', {
             ...user,
-            loggedIn: true
+            logged_in: true
         });
     } catch (err) {
         console.error(err);
@@ -71,7 +71,7 @@ router.get('/dashboard', withAuth, async (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-    if (req.session.loggedIn) {
+    if (req.session.logged_in) {
         res.redirect('/dashboard');
         return;
     }
