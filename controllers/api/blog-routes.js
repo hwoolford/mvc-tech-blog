@@ -27,6 +27,7 @@ router.put('/:id', withAuth, async (req, res) => {
             include: [{ model: User}],
             where: {
                 id: req.params.id,
+                user_id: req.session.user_id,
             },
         });
         if (dbBlogData[0] === 0) {
