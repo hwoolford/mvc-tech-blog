@@ -5,14 +5,9 @@ const { Blog, User } = require('../../models');
 router.post('/', async (req, res) => {
     try {
         const dbBlogData = await Blog.create({
-            title: req.body.title,
-            content: req.body.content,
+            ...req.body,
+            user_id: req.session.user_id,
         });
-
-        if (!dbBlogData) {
-            res.status(400).json({ message: 'Please enter a title and content'});
-            return;
-        }
 
         req.session.save(() => {
             req.session.loggedIn = true;

@@ -19,7 +19,6 @@ User.init(
         username: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true,
         },
         email: {
             type: DataTypes.STRING,
@@ -40,9 +39,13 @@ User.init(
     },
     {
         hooks: {
-            async beforeCreate(newUserData) {
+            beforeCreate: async (newUserData) => {
                 newUserData.password = await bcrypt.hash(newUserData.password, 10);
                 return newUserData;
+            },
+            beforeUpdate: async (UpdatedUserData) => {
+                UpdatedUserData.password = await bcrypt.hash(UpdatedUserData.password, 10);
+                return UpdatedUserData;
             },
         },  
         sequelize,

@@ -4,19 +4,16 @@ const { User } = require('../../models');
 // Create User Route
 router.post('/', async (req, res) => {
     try {
-        const dbUserData = await User.create({
-            username: req.body.username,
-            email: req.body.email,
-            password: req.body.password,
-        });
+        const dbUserData = await User.create(req.body);
 
         req.session.save(() => {
             req.session.loggedIn = true;
+            req.session.user_id = dbUserData.id;
             res.status(200).json(dbUserData);
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Unable to create an account at this time. Please try again later.'});
+        res.status(400).json({ message: 'Unable to create an account at this time. Please try again later.'});
     }
 });
 
@@ -35,7 +32,7 @@ router.post('/login', async (req, res) => {
             return;
         }
 
-        const validPassword = await dbUserData.checkPassword(req.body.password);
+        const validPassword = dbUserData.checkPassword(req.body.password);
 
         if (!validPassword) {
             res.status(400).json({ message: 'Incorrect email or password. Please try again!'});
@@ -44,11 +41,12 @@ router.post('/login', async (req, res) => {
 
         req.session.save(() => {
             req.session.loggedIn = true;
+            req.session.user_id = dbUserData.id;
             res.status(200).json({ user: dbUserData, message: 'You are now logged in!'});
         });
     } catch (err) {
         console.log(err);
-        res.status(500).json(err);
+        res.status(400).json(err);
     }
 });
 
