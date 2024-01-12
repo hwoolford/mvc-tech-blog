@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Tech Blog</title>
+    <link rel="stylesheet" href="../../public/css/style.css">
+</head>
+
+<body>
+    <div>
+        <header>
+            <h1>The Tech Blog</h1>
+            <nav>
+                {{#if logged_in}}
+                <a href="/dashboard">Dashboard</a>
+                <button>Logout</button>
+                {{else}}
+                <a href="/login">Login</a>
+                {{/if}}
+            </nav>
+        </header>
+        <main>
+            {{{ body }}}
+        </main>
+        <footer></footer>
+    </div>
+    {{#if logged-in}}
+    <script src="../../public/js/logout.js"></script>
+    {{/if}}
+</body>
+
+</html>
