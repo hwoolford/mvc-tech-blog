@@ -3,6 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const exphbs = require('express-handlebars');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
+require("dotenv").config();
 
 const routes = require('./controllers');
 const sequelize = require('./config/connection');
@@ -11,10 +12,14 @@ const helpers = require('./utils/helpers');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-//do I need to change any of this???
 const sess = {
-    secret: "WdcumAKZfloCP0u7Wgm%diFO7MWc3jGmW7VYHY3lp20r4bPiNImNmQbde%!9Ypb%4P7UCGXzIcLvNYDrR6oRR&L*&DqiblyDm$%3!FkVJ!u3y^%Iapx6chL(6&XQktqb", 
-    cookie: {},
+    secret: process.env.SECRET, 
+    cookie: {
+      maxAge: 3600000,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", 
+      sameSite: "strict",
+    },
     resave: false,
     saveUninitialized: true,
     store: new SequelizeStore({
@@ -23,6 +28,10 @@ const sess = {
   };
 
 app.use(session(sess));
+
+// Static files cache control
+const oneDay = 1000 * 60 * 60 * 24; // 24 hours
+app.use(express.static(path.join(__dirname, "public"), { maxAge: oneDay }));
 
 const hbs = exphbs.create({ helpers });
 
@@ -35,6 +44,24 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(routes);
 
-sequelize.sync({ force: false }).then(() => {
-  app.listen(PORT, () => console.log('Now listening'));
-});
+const middleware = (err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
+  next();
+}
+
+app.use(middleware);
+
+
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log("Connection has been established successfully.");
+    return sequelize.sync({ force: false });
+  })
+  .then(() => {
+    app.listen(PORT, () => console.log(`Now listening on PORT ${PORT}!`));
+  })
+  .catch((err) => {
+    console.error("Unable to connect to the database:", err);
+  });
